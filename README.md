@@ -1,4 +1,5 @@
 # weatherreportcomparator
+<<<<<<< HEAD
 End-to-end test automation Solution : Create a project that compares weather reporting done by 2 sources. 
 
 Overview
@@ -27,3 +28,6 @@ Anjana
 Support
 Please enter an issue in the repo for any questions or problems.
 Alternatively, please contact us at anjanaiv.26@gmail.com
+=======
+Weather Report Problem Statement by TestVagrant Technologies
+>>>>>>> 5c1d27261a1ed70ac67e4b92b3987e6bc77b1f6e

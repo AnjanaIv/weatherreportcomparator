@@ -3,7 +3,8 @@
 <suite name="Suite">
   <test thread-count="5" name="Test">
   <parameter name="city" value="Bangalore"/>
-  <parameter name="variance" value="60"/>
+  <parameter name="temp_variance" value="2"/>
+  <parameter name="hum_variance" value="10"/>
     <classes>
       <class name="tests.WeatherFromUITest"/>
     </classes>
