@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Suite" duration-ms="14067" started-at="2021-04-05T06:02:13 IST" finished-at="2021-04-05T06:02:27 IST">
+    <groups>
+    </groups>
+    <test name="Test" duration-ms="14067" started-at="2021-04-05T06:02:13 IST" finished-at="2021-04-05T06:02:27 IST">
+      <class name="tests.WeatherFromUITest">
+        <test-method status="PASS" signature="setUp()[pri:0, instance:tests.WeatherFromUITest@1fc2b765]" name="setUp" is-config="true" duration-ms="4374" started-at="2021-04-05T06:02:13 IST" finished-at="2021-04-05T06:02:17 IST">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="getWeatherReport(java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:tests.WeatherFromUITest@1fc2b765]" name="getWeatherReport" duration-ms="7107" started-at="2021-04-05T06:02:17 IST" finished-at="2021-04-05T06:02:24 IST">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[Bangalore]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[2]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[10]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getWeatherReport -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:tests.WeatherFromUITest@1fc2b765]" name="tearDown" is-config="true" duration-ms="2537" started-at="2021-04-05T06:02:24 IST" finished-at="2021-04-05T06:02:27 IST">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- tests.WeatherFromUITest -->
+    </test> <!-- Test -->
+  </suite> <!-- Suite -->
+</testng-results>
