@@ -57,9 +57,11 @@ public class WeatherFromUITest extends TestBase{
 	public static void getWeatherReport(String city,String temp_var,String hum_variance) {
 		report = new ExtentReports(FrameworkConstants.getReportfilepath());
 		test = report.startTest("Weather Comparatore Report");
-		//Visit ndtv website�s weather page and search for Bangalore 
-		city = "Amritsar";
 		try {
+			//Type "Amritsar" in `Pin your city` section & click on Amritsar checkbox
+			//validate that the corresponding city is available on the map with temperature information
+			// Click on city name on the map & verify tooltip
+			//Verify the values
 			DriverManager.getTh_driver().findElement(By.xpath("//input[@id='searchBox']")).sendKeys(city);
 			DriverManager.getTh_driver().findElement(By.xpath("//input[@id='"+city+"']")).click();
 			Assert.assertEquals(DriverManager.getTh_driver().findElement(By.xpath("//div[@class='outerContainer' and @title='"+city+"']")).isDisplayed(), true);
@@ -67,8 +69,8 @@ public class WeatherFromUITest extends TestBase{
 			HashMap<String,String> weather = new HashMap<String,String>();
 			weather.put("temp", DriverManager.getTh_driver().findElement(By.xpath("//div[@title='"+city+"']//div[@class='temperatureContainer']/span[1]")).getText());
 			weather.put("humidity", DriverManager.getTh_driver().findElement(By.xpath("//div[@title='"+city+"']//div[@class='temperatureContainer']/span[2]")).getText());
-			test.log(LogStatus.INFO, "Temperature in Degres "+city+" is :"+weather.get("temp"));
-			test.log(LogStatus.INFO, "Temperature in Farah "+city+" is :"+weather.get("humidity"));
+			//test.log(LogStatus.INFO, "Temperature in Degres "+city+" is :"+weather.get("temp"));
+			//test.log(LogStatus.INFO, "Temperature in Farah "+city+" is :"+weather.get("humidity"));
 			//Get the detailed weather report
 			Thread.sleep(1000);
 			DriverManager.getTh_driver().findElement(By.xpath("//div[@title='"+city+"']//span//img")).click();
@@ -77,10 +79,9 @@ public class WeatherFromUITest extends TestBase{
 			test.log(LogStatus.INFO, DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][2]")).getText());
 			test.log(LogStatus.INFO, DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][3]")).getText());
 			double uiTempValue = Double.valueOf(DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][4]")).getText().split(":")[1].trim());
-			//double uiHumidityValue = Integer.valueOf(DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][3]")).getText().split(":")[1].trim());
+			double uiHumidityValue = Double.valueOf(DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][3]")).getText().split(":")[1].trim().split("%")[0].trim());
 			test.log(LogStatus.INFO, DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][4]")).getText());
 			test.log(LogStatus.INFO, DriverManager.getTh_driver().findElement(By.xpath("//div[@class='leaflet-popup  leaflet-zoom-animated']//span[@class='heading'][5]")).getText());
-			test.log(LogStatus.INFO, "Unable to compare UI & API values as none of the nodes of API response matches with temperature or humidity");
 			//Get response from the weather API for city
 			baseURI= "http://api.openweathermap.org/data/2.5";
 			Response response = given().baseUri(baseURI)
@@ -89,22 +90,24 @@ public class WeatherFromUITest extends TestBase{
 			final Object tempValue = jsonPathEvaluator.get("main.temp");
 			final int humidityValue = jsonPathEvaluator.get("main.humidity");
 			double apiTempValue = Double.valueOf(tempValue.toString());
-		test.log(LogStatus.INFO ,"API Temp Value for city:" + city, String.valueOf(apiTempValue));
-		//Store the API response and build the weather object 2
-		//Specify the variance logic - for e.g. 2 degree celsius for temperature & 10% for humidity
-		//Compare weather objects 1 and 2 along with the variance and mark tests as pass or fail based on comparator response 
-		final boolean valuesInRange = compareWeatherValuesInRange(uiTempValue, apiTempValue, 2);
-		if (!valuesInRange)
-			test.log(LogStatus.ERROR , "The UI and API temp values are Not in given tolerance range for city: " + city);
-		int tolerance=5;
-		/*boolean bflag = false;
-		if(uiHumidityValue <= (humidityValue + tolerance) && uiHumidityValue >= (humidityValue- tolerance)){
-			bflag = true;
-		}
-		if (!bflag)
-			test.log(LogStatus.ERROR , "The UI and API humidity values are Not in given tolerance range for city: " + city);   
-		else
-			test.log(LogStatus.PASS, "The difference of Humidity values are within tolerance(" + tolerance + ")");*/
+			//Store the API response and build the weather object 2
+			//Specify the variance logic - for e.g. 2 degree celsius for temperature & 10% for humidity
+			//Compare weather objects 1 and 2 along with the variance and mark tests as pass or fail based on comparator response 
+			test.log(LogStatus.INFO ,"UI Temp Value for given city:" + city+" :"+String.valueOf(uiTempValue*10));
+			test.log(LogStatus.INFO ,"API Temp Value for given city:" + city+" :"+String.valueOf(apiTempValue));
+			final boolean valuesInRange = compareWeatherValuesInRange(uiTempValue*10, apiTempValue, Integer.valueOf(temp_var));
+			if (!valuesInRange)
+				test.log(LogStatus.ERROR , "The UI and API temp values are Not in given tolerance range for city: " + city);
+			boolean bflag = false;
+			test.log(LogStatus.INFO ,"UI Humidity Value for given city:" + city+" :"+String.valueOf(uiHumidityValue));
+			test.log(LogStatus.INFO ,"API Humidity Value for given city:" + city+" :"+String.valueOf(humidityValue));
+			if(uiHumidityValue <= (humidityValue + ((uiHumidityValue*Integer.valueOf(hum_variance))/uiHumidityValue)) && uiHumidityValue >= (humidityValue- ((uiHumidityValue*Integer.valueOf(hum_variance))/uiHumidityValue))){
+				bflag = true;
+			}
+			if (!bflag)
+				test.log(LogStatus.ERROR , "The UI and API humidity values are Not in given tolerance range "+hum_variance +" for city: " + city);   
+			else
+				test.log(LogStatus.PASS, "The difference of Humidity values are within tolerance(" + Integer.valueOf(hum_variance) + ")");
 		}catch(Exception e) {
 			e.printStackTrace();
 			test.log(LogStatus.FAIL, "Error in fetching the intended values "+e);
@@ -113,15 +116,15 @@ public class WeatherFromUITest extends TestBase{
 		report.flush();
 		DriverManager.getTh_driver().close();
 	}
-	
-	
+
+
 	public static boolean compareWeatherValuesInRange(double value1, double value2, int tolerance) {
-		double differenceValue = Math.abs(value1 - value2);
+		double differenceValue = Math.round(value1 - value2);
 		if (differenceValue <= tolerance) {
 			test.log(LogStatus.PASS, "The difference of temp values are within tolerance(" + tolerance + ")- Difference: " + differenceValue);
 			return true;
 		} else {
-			test.log(LogStatus.PASS, "The difference of temp values are not within tolerance(" + tolerance + ")- Difference: " + differenceValue);
+			test.log(LogStatus.FAIL, "The difference of temp values are not within tolerance(" + tolerance + ")- Difference: " + differenceValue);
 			return false;
 		}
 	}
